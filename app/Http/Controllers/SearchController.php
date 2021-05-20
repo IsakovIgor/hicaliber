@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Filters\RoomFilters;
 use App\Models\Room;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Class SearchController
@@ -13,7 +14,11 @@ use App\Models\Room;
  */
 class SearchController extends Controller
 {
-    public function search(RoomFilters $filters)
+    /**
+     * @param RoomFilters $filters
+     * @return JsonResponse
+     */
+    public function search(RoomFilters $filters): JsonResponse
     {
         return response()->json([
             'data' => Room::filters($filters)->get(),

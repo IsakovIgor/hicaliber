@@ -10,28 +10,41 @@ use Illuminate\Support\Collection;
 abstract class Filters
 {
     protected Request $request;
-
     protected Builder $builder;
     protected array $filters = [];
     protected string $aliasPrefix = '';
     protected array $defaultFilters = [];
     private array $appliedFilters = [];
 
+    /**
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
+    /**
+     * @param $filter
+     * @param $value
+     */
     private function addFilterInApplied($filter, $value) : void
     {
         $this->appliedFilters[$filter] = $value;
     }
 
+    /**
+     * @return bool
+     */
     public function filterIsActive() : bool
     {
         return ! empty($this->appliedFilters);
     }
 
+    /**
+     * @param Builder $builder
+     * @return Builder
+     */
     public function apply(Builder $builder) : Builder
     {
         $this->builder = $builder;
@@ -45,6 +58,10 @@ abstract class Filters
         return $this->builder;
     }
 
+    /**
+     * @param Request $filters
+     * @return Collection
+     */
     private function removeAliasPrefix(Request $filters) : Collection
     {
         $realFilters = [];
@@ -54,6 +71,9 @@ abstract class Filters
         return collect($realFilters);
     }
 
+    /**
+     * @return Collection
+     */
     public function getFilters() : Collection
     {
         return collect($this->defaultFilters)->merge(
@@ -61,8 +81,30 @@ abstract class Filters
         );
     }
 
+    /**
+     * @return array
+     */
     public function getAppliedFilters() : array
     {
         return $this->appliedFilters;
+    }
+
+    /**
+     * @param string $field
+     * @param string $val
+     * @return Builder
+     */
+    protected function getRange(string $field, string $val) : Builder
+    {
+        $val = \json_decode($val, true);
+        if (!empty($val['from']) && !empty($val['to'])) {
+            return $this->builder->whereBetween($field, $val);
+        } elseif (!empty($val['from']) && empty($val['to'])) {
+            return $this->builder->where($field, '>', $val['from']);
+        } elseif (!empty($val['to'])) {
+            return $this->builder->where($field, '<', $val['to']);
+        }
+
+        return $this->builder;
     }
 }

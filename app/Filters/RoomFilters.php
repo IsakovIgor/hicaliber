@@ -17,34 +17,57 @@ class RoomFilters extends Filters
         'price', // range
     ];
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function name(string $val) : Builder
     {
-        return $this->builder->where('name', 'like', "%$val%");
+        return !empty($val) ? $this->builder->where('name', 'like', "%$val%") : $this->builder;
     }
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function bedrooms(string $val) : Builder
     {
-        return $this->builder->where('bedrooms', '=', $val);
+        return !empty($val) ? $this->builder->where('bedrooms', '=', $val) : $this->builder;
     }
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function bathrooms(string $val) : Builder
     {
-        return $this->builder->where('bathrooms', '=', $val);
+        return !empty($val) ? $this->builder->where('bathrooms', '=', $val) : $this->builder;
     }
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function storeys(string $val) : Builder
     {
-        return $this->builder->where('storeys', '=', $val);
+        return !empty($val) ? $this->builder->where('storeys', '=', $val) : $this->builder;
     }
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function garages(string $val) : Builder
     {
-        return $this->builder->where('garages', '=', $val);
+        return !empty($val) ? $this->builder->where('garages', '=', $val) : $this->builder;
     }
 
+    /**
+     * @param string $val
+     * @return Builder
+     */
     protected function price(string $val) : Builder
     {
-        $val = \json_decode($val, true);
-        return $this->builder->whereBetween('price', $val);
+        return $this->getRange('price', $val);
     }
 }
