@@ -20,6 +20,8 @@ class SearchController extends Controller
      */
     public function search(RoomFilters $filters): JsonResponse
     {
+        // sleep for loading
+        sleep(1);
         return response()->json([
             'data' => Room::filters($filters)->get(),
         ]);

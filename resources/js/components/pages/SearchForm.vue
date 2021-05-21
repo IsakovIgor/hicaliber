@@ -24,7 +24,7 @@
                     <el-form-item label="Price to">
                         <el-input v-model="form.price.to" type="number" step="1"></el-input>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item class="float-right">
                         <el-button type="primary" @click="getData">Search</el-button>
                         <el-button>Cancel</el-button>
                     </el-form-item>
@@ -37,12 +37,9 @@
                 <el-table
                     :data="rooms"
                     stripe
+                    v-loading.fullscreen.lock="loading"
                     empty-text="No one rooms found"
                     style="width: 100%">
-                    <el-table-column
-                        prop="id"
-                        label="ID">
-                    </el-table-column>
                     <el-table-column
                         prop="name"
                         label="Name">
@@ -89,7 +86,8 @@ export default {
                 to: ''
             }
         },
-        rooms: []
+        rooms: [],
+        loading: false
     }),
 
     created() {
@@ -98,6 +96,7 @@ export default {
 
     methods: {
         getData() {
+            this.loading = true
             axios.get('/api/v1/search', {params: this.form })
                 .then((resp) => {
                     if (resp.data.data.length === 0) {
@@ -107,6 +106,7 @@ export default {
                         });
                     }
                     this.rooms = resp.data.data
+                    this.loading = false
                 }).catch((err) => {
                     throw new Error(err)
                 })
@@ -116,5 +116,7 @@ export default {
 </script>
 
 <style scoped>
-
+    .float-right {
+        float: right;
+    }
 </style>
